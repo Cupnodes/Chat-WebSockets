@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital@1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <output class="output"></output>
+    <input type="text" placeholder="Digite uma mensagem">
+
+    <script>
+        const ws = new WebSocket('ws://172.17.0.2:8080/teste');
+        const input = document.querySelector('input');
+        const output = document.querySelector('output');
+
+        ws.addEventListener('open', console.log);
+        ws.addEventListener('message', console.log);
+
+        ws.addEventListener('message', message => {
+            const dados = JSON.parse(message.data);
+            if(dados.type === 'chat') {
+                output.append('Outro: ' + dados.text + createElement('br'));
+            }
+        })
+
+        input.addEventListener('keypress', e => {
+            if(e.code === 'Enter') {
+                const valor = input.value;
+                output.append('Eu: ' + valor, document.createElement('br'));
+                input.value = "";
+                ws.send(valor);
+            }
+        })
+    </script>
+</body>
+</html>
